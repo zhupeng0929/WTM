@@ -190,7 +190,7 @@ namespace WalkingTec.Mvvm.TagHelpers.LayUI
 
                     if (checktype.IsEnumOrNullableEnum())
                     {
-                        listItems = checktype.ToListItems(Field.Model?? DefaultValue);
+                        listItems = checktype.ToListItems(Field.Model ?? DefaultValue);
                     }
                     else if (checktype == typeof(bool) || checktype == typeof(bool?))
                     {
@@ -199,7 +199,7 @@ namespace WalkingTec.Mvvm.TagHelpers.LayUI
                         {
                             df = test;
                         }
-                        listItems = Utils.GetBoolCombo(BoolComboTypes.Custom, (bool?)Field.Model??df, YesText, NoText);
+                        listItems = Utils.GetBoolCombo(BoolComboTypes.Custom, (bool?)Field.Model ?? df, YesText, NoText);
                     }
                 }
                 else // 添加用户设置的设置源
@@ -216,13 +216,17 @@ namespace WalkingTec.Mvvm.TagHelpers.LayUI
                         }
                         foreach (var item in listItems)
                         {
-                            if (selectVal.Contains(item.Value?.ToString()))
+                            if (selectVal != null && selectVal.Count > 0)
                             {
-                                item.Selected = true;
-                            }
-                            else
-                            {
-                                item.Selected = false;
+
+                                if (selectVal.Contains(item.Value?.ToString()))
+                                {
+                                    item.Selected = true;
+                                }
+                                else
+                                {
+                                    item.Selected = false;
+                                }
                             }
                         }
                     }
@@ -249,7 +253,7 @@ var {Id} = xmSelect.render({{
     name:'{Field.Name}',
     tips:'{EmptyText}',
     disabled: {Disabled.ToString().ToLower()},
-    {(THProgram._localizer["Sys.LayuiDateLan"] =="CN"? "language:'zn'," : "language:'en',")}
+    {(THProgram._localizer["Sys.LayuiDateLan"] == "CN" ? "language:'zn'," : "language:'en',")}
 	autoRow: {AutoRow.ToString().ToLower()},
 	filterable: {EnableSearch.ToString().ToLower()},
     template({{ item, sels, name, value }}){{
@@ -299,9 +303,9 @@ var {Id} = xmSelect.render({{
 ")}
 	height: '400px',
     on:function(data){{
-        {((LinkField != null || string.IsNullOrEmpty(LinkId) == false)?@$"
-            if (eval(""{(string.IsNullOrEmpty(ChangeFunc)?"1==1":FormatFuncName(ChangeFunc))}"") != false) {{
-                var u = ""{(TriggerUrl??"")}"";
+        {((LinkField != null || string.IsNullOrEmpty(LinkId) == false) ? @$"
+            if (eval(""{(string.IsNullOrEmpty(ChangeFunc) ? "1==1" : FormatFuncName(ChangeFunc))}"") != false) {{
+                var u = ""{(TriggerUrl ?? "")}"";
                 if (u.indexOf(""?"") == -1) {{
                     u += ""?t="" + new Date().getTime();
                 }}
@@ -311,10 +315,10 @@ var {Id} = xmSelect.render({{
                 ff.ChainChange(u, $('#{Id}')[0])
         }}" : FormatFuncName(ChangeFunc))}
    }},
-	data:  {JsonSerializer.Serialize(GetLayuiTree(listItems,selectVal))}
+	data:  {JsonSerializer.Serialize(GetLayuiTree(listItems, selectVal))}
 }});
      {Id}defaultvalues = {JsonSerializer.Serialize(selectVal)};
-        {(selectVal?.Count>0 && (LinkField != null || string.IsNullOrEmpty(LinkId) == false) ? @$"
+        {(selectVal?.Count > 0 && (LinkField != null || string.IsNullOrEmpty(LinkId) == false) ? @$"
                 var {Id}u = ""{(TriggerUrl ?? "")}"";
                 if ({Id}u.indexOf(""?"") == -1) {{
                     {Id}u += ""?t="" + new Date().getTime();
