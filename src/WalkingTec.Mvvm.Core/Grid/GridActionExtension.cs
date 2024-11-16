@@ -54,6 +54,7 @@ namespace WalkingTec.Mvvm.Core
             string msg = null;
             var ispost = false;
             string qs = null;
+            string buttonClass = null;
             switch (standardType)
             {
                 case GridActionStandardTypesEnum.Approve:
@@ -75,6 +76,7 @@ namespace WalkingTec.Mvvm.Core
                     break;
                 case GridActionStandardTypesEnum.Edit:
                     iconcls = "layui-icon layui-icon-edit";
+                    buttonClass = " layui-btn-primary layui-border-blue";
                     gridname = CoreProgram._localizer?["Sys.Edit"];
                     paraType = GridActionParameterTypesEnum.SingleId;
                     showInRow = true;
@@ -82,6 +84,7 @@ namespace WalkingTec.Mvvm.Core
                     break;
                 case GridActionStandardTypesEnum.Delete:
                     iconcls = "layui-icon layui-icon-delete";
+                    buttonClass = " layui-btn-primary layui-border-red";
                     gridname = CoreProgram._localizer?["Sys.Delete"];
                     paraType = GridActionParameterTypesEnum.SingleId;
                     showInRow = true;
@@ -182,7 +185,8 @@ namespace WalkingTec.Mvvm.Core
                 ForcePost = ispost,
                 QueryString = qs,
                 IsExport = isexport,
-                whereStr = list.ToArray()
+                whereStr = list.ToArray(),
+                ButtonClass = buttonClass,
             };
         }
 

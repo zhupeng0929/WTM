@@ -38,6 +38,10 @@ namespace WalkingTec.Mvvm.TagHelpers.LayUI
         public string TriggerUrl { get; set; }
 
         /// <summary>
+        /// 
+        /// </summary>
+        public List<string> SelectItmes { get; set; }
+        /// <summary>
         /// 是否多选
         /// 默认根据Field 绑定的值类型进行判断。Array or List 即多选，否则单选
         /// </summary>
@@ -244,6 +248,23 @@ namespace WalkingTec.Mvvm.TagHelpers.LayUI
                         }
                     }
                 }
+                if (SelectItmes != null && SelectItmes.Count > 0)
+                {
+                    selectVal = SelectItmes;
+                    foreach (var item in listItems)
+                    {
+
+                        if (SelectItmes.Contains(item.Value?.ToString()))
+                        {
+                            item.Selected = true;
+                        }
+                        else
+                        {
+                            item.Selected = false;
+                        }
+                    }
+                }
+
             }
 
             var script = $@"

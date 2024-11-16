@@ -35,7 +35,8 @@ namespace WalkingTec.Mvvm.TagHelpers.LayUI
         public bool IsPassword { get; set; }
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            string placeHolder = EmptyText ?? "";
+            base.Process(context, output);
+            string placeHolder = EmptyText ?? "请输入"+ LabelText;
             string type = IsPassword ? "password":"text";
             output.TagName = "input";
             output.TagMode = TagMode.StartTagOnly;
@@ -64,7 +65,9 @@ namespace WalkingTec.Mvvm.TagHelpers.LayUI
                 output.Attributes.Add("value", WebUtility.HtmlDecode(Field?.Model?.ToString()));
             }
             output.Attributes.Add("placeholder", placeHolder);
-            output.Attributes.Add("class", "layui-input");
+            output.Attributes.TryGetAttribute("class", out TagHelperAttribute oldclass);
+            output.Attributes.SetAttribute("class", "layui-input " + (oldclass?.Value ?? string.Empty));
+            //output.Attributes.Add("class", "layui-input");
             if (string.IsNullOrEmpty(SearchUrl) == false)
             {
                 output.Attributes.Add("autocomplete", "off");
@@ -83,7 +86,7 @@ namespace WalkingTec.Mvvm.TagHelpers.LayUI
                 output.Attributes.Add("wtm-linkto", $"{linkto}");
             }
 
-            base.Process(context, output);
+           
         }
     }
 
