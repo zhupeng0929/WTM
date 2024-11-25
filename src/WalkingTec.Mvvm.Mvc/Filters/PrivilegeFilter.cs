@@ -32,7 +32,7 @@ namespace WalkingTec.Mvvm.Mvc.Filters
                 return;
             }
             context.SetWtmContext();
-            _ =controller.Wtm.LoginUserInfo;
+            _ = controller.Wtm.LoginUserInfo;
             //if (controller.Wtm.ConfigInfo.IsQuickDebug && controller is BaseApiController)
             //{
             //    base.OnActionExecuting(context);
@@ -43,7 +43,7 @@ namespace WalkingTec.Mvvm.Mvc.Filters
             var lg = context.HttpContext.RequestServices.GetRequiredService<LinkGenerator>();
 
             string u = null;
-            if (ad.Parameters.Any(x=>x.Name.ToLower() == "id"))
+            if (ad.Parameters.Any(x => x.Name.ToLower() == "id"))
             {
                 u = lg.GetPathByAction(ad.ActionName, ad.ControllerName, new { area = context.RouteData.Values["area"], id = 0 });
             }
@@ -87,7 +87,7 @@ namespace WalkingTec.Mvvm.Mvc.Filters
                 {
                     isPublic = true;
                 }
-                if(ad.ControllerTypeInfo.FullName == "WalkingTec.Mvvm.Admin.Api.FileApiController" && (ad.MethodInfo.Name == "GetFileName" || ad.MethodInfo.Name == "GetFile" || ad.MethodInfo.Name == "DownloadFile"))
+                if (ad.ControllerTypeInfo.FullName == "WalkingTec.Mvvm.Admin.Api.FileApiController" && (ad.MethodInfo.Name == "GetFileName" || ad.MethodInfo.Name == "GetFile" || ad.MethodInfo.Name == "DownloadFile"))
                 {
                     isPublic = true;
 
@@ -113,7 +113,7 @@ namespace WalkingTec.Mvvm.Mvc.Filters
                 return;
             }
 
-            if(isPublic == false && controller != null && controller.Wtm != null)
+            if (isPublic == false && controller != null && controller.Wtm != null)
             {
                 isPublic = controller.Wtm.IsUrlPublic(u);
             }
@@ -169,8 +169,8 @@ namespace WalkingTec.Mvvm.Mvc.Filters
                                 }
                                 ContentResult cr = new ContentResult()
                                 {
-                                    Content = $"<script>var redirect='{(u?.ToLower().StartsWith("/login/logout")==true?"":u)}'+ window.location.hash; if(redirect=='/'){{window.location.href='{lp}'; }}  else{{window.location.href='{lp}?ReturnUrl='+encodeURIComponent(redirect);}}</script>",
-                                    ContentType = "text/html",                                    
+                                    Content = $"<script>var redirect='{(u?.ToLower().StartsWith("/login/logout") == true ? "" : u)}'+ window.location.hash; if(redirect=='/'){{window.location.href='{lp}'; }}  else{{window.location.href='{lp}?ReturnUrl='+encodeURIComponent(redirect);}}</script>",
+                                    ContentType = "text/html",
                                     StatusCode = 200
                                 };
                                 //context.HttpContext.Response.Headers.Add("IsScript", "true");
@@ -186,7 +186,7 @@ namespace WalkingTec.Mvvm.Mvc.Filters
             }
             else if (isHostOnly)
             {
-                if(controller.Wtm.LoginUserInfo.CurrentTenant != null)
+                if (controller.Wtm.LoginUserInfo.CurrentTenant != null)
                 {
                     if (controller is ControllerBase ctrl)
                     {
@@ -194,7 +194,7 @@ namespace WalkingTec.Mvvm.Mvc.Filters
                         {
                             context.Result = ctrl.Forbid(JwtBearerDefaults.AuthenticationScheme);
                         }
-                        else if(controller is BaseApiController bac)
+                        else if (controller is BaseApiController bac)
                         {
                             context.Result = bac.Forbid();
                         }
@@ -214,50 +214,50 @@ namespace WalkingTec.Mvvm.Mvc.Filters
                 }
             }
 
-                if (isAllRights == false)
+            if (isAllRights == false)
+            {
+                bool canAccess = controller.Wtm.IsAccessable(controller.BaseUrl);
+                if (canAccess == false && controller.ConfigInfo.IsQuickDebug == false)
                 {
-                    bool canAccess = controller.Wtm.IsAccessable(controller.BaseUrl);
-                    if (canAccess == false && controller.ConfigInfo.IsQuickDebug == false)
+                    if (controller is ControllerBase ctrl)
                     {
-                        if (controller is ControllerBase ctrl)
+                        //if it's a layui search request,returns a layui format message so that it can parse
+                        if (ctrl.Request.Headers.ContainsKey("layuisearch"))
                         {
-                            //if it's a layui search request,returns a layui format message so that it can parse
-                            if (ctrl.Request.Headers.ContainsKey("layuisearch"))
+                            ContentResult cr = new ContentResult()
                             {
-                                ContentResult cr = new ContentResult()
-                                {
-                                    Content = "{\"Data\":[],\"Count\":0,\"Page\":1,\"PageCount\":0,\"Msg\":\""+ MvcProgram._localizer["Sys.NoPrivilege"] + "\",\"Code\":403}",
-                                    ContentType = "application/json",
-                                    StatusCode = 200
-                                };
-                                context.Result = cr;
+                                Content = "{\"Data\":[],\"Count\":0,\"Page\":1,\"PageCount\":0,\"Msg\":\"" + MvcProgram._localizer["Sys.NoPrivilege"] + "\",\"Code\":403}",
+                                ContentType = "application/json",
+                                StatusCode = 200
+                            };
+                            context.Result = cr;
+                        }
+                        else
+                        {
+                            if (ctrl.HttpContext.Request.Headers.ContainsKey("Authorization"))
+                            {
+                                context.Result = ctrl.Forbid(JwtBearerDefaults.AuthenticationScheme);
                             }
-                            else
-                            {
-                                if (ctrl.HttpContext.Request.Headers.ContainsKey("Authorization"))
-                                {
-                                    context.Result = ctrl.Forbid(JwtBearerDefaults.AuthenticationScheme);
-                                }
                             else if (controller is BaseApiController bac)
                             {
                                 context.Result = bac.Forbid();
                             }
                             else
                             {
-                                    ContentResult cr = new ContentResult()
-                                    {
-                                        Content = MvcProgram._localizer["Sys.NoPrivilege"],
-                                        ContentType = "text/html",
-                                        StatusCode = 200
-                                    };
-                                    context.Result = cr;
+                                ContentResult cr = new ContentResult()
+                                {
+                                    Content = MvcProgram._localizer["Sys.NoPrivilege"],
+                                    ContentType = "text/html",
+                                    StatusCode = 200
+                                };
+                                context.Result = cr;
 
-                                }
                             }
                         }
                     }
                 }
-            
+            }
+
             base.OnActionExecuting(context);
         }
 
