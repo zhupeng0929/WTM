@@ -572,7 +572,9 @@ window.ff = {
             }
         }
     },
-
+    Back: function () {
+        window.history.back(); // 返回上一页
+    },
     ResizeChart: function (id) {
         if (layui == undefined || layui.admin == undefined) {
             return;

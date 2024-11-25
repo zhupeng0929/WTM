@@ -23,7 +23,7 @@ namespace WalkingTec.Mvvm.Mvc
 
         public static FResult Message(this FResult self, string msg, string title = null)
         {
-            self.ContentBuilder.Append($"ff.Msg('{msg}','{title??MvcProgram._localizer?["Sys.Info"]}');");
+            self.ContentBuilder.Append($"ff.Msg('{msg}','{title}');");
             return self;
         }
 

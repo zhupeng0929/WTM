@@ -700,9 +700,11 @@ namespace WalkingTec.Mvvm.Core
                             {
                                 var f = field.ToLower();
 
-                                if (f.StartsWith($"{this.GetParentStr().ToLower()}entity." + pro.Name.ToLower() + "[0]."))
+                                if (f.StartsWith($"{this.GetParentStr().ToLower()}entity." + pro.Name.ToLower() + "["))
                                 {
-                                    string name = f.Replace($"{this.GetParentStr().ToLower()}entity." + pro.Name.ToLower() + "[0].", "");
+                                    //string name = f.Replace($"{this.GetParentStr().ToLower()}entity." + pro.Name.ToLower() + "[0].", "");
+                                    string name = f.Substring(f.LastIndexOf('.') + 1);
+
                                     setnames.Add(name);
                                 }
                             }
